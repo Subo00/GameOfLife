@@ -5,10 +5,14 @@ using UnityEngine;
 public class GridManager : MonoBehaviour
 {
     [SerializeField] private int _width, _height;
-    [SerializeField] private Tile _tilePrefab;
+    [SerializeField] private int _maxWidth, _maxHeight;
+    [SerializeField] private Tile  _tilePrefab;
     [SerializeField] private Transform _cam;
     [Range(0.1f, 0.9f)]
     [SerializeField] private float _randValue;
+
+    private float _scaleX = 1f;
+    private float _scaleY = 1f;
 
     private Dictionary<Vector2, Tile> _tiles;
     void Start()
@@ -20,6 +24,8 @@ public class GridManager : MonoBehaviour
     void GenerateGrid()
     {
         _tiles = new Dictionary<Vector2, Tile>();
+        _scaleX = _width > _maxWidth ? (float)_maxWidth/(float)_width : 1f;
+        _scaleY = _height > _maxHeight ? (float)_maxHeight/(float)_height : 1f;
         for(int x = 0; x < _width; x++)
         {
             for(int y = 0; y < _height; y++)
@@ -29,6 +35,7 @@ public class GridManager : MonoBehaviour
 
                 var isOffset = (x % 2 == 0 && y % 2 != 0) || (x % 2 != 0 && y % 2 == 0);
                 spawnedTile.Init(isOffset);
+                
 
                 _tiles[new Vector2(x,y)] = spawnedTile;
             }

@@ -266,8 +266,16 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 519420032}
     - target: {fileID: 6206613075477743162, guid: a927346c8e07af9c0806bc5400dc625a, type: 3}
+      propertyPath: _width
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 6206613075477743162, guid: a927346c8e07af9c0806bc5400dc625a, type: 3}
+      propertyPath: _height
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 6206613075477743162, guid: a927346c8e07af9c0806bc5400dc625a, type: 3}
       propertyPath: _randValue
-      value: 0.339
+      value: 0.1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a927346c8e07af9c0806bc5400dc625a, type: 3}
