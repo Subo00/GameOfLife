@@ -10,13 +10,16 @@ public class Tile : MonoBehaviour
     [SerializeField] private SpriteRenderer _renderer;
     [SerializeField] private GameObject _hightlight;
 
-    private bool _isAlive;
+    
     private bool _isOffset;
+
+    public bool isAlive;
+
     public void Init(bool isOffset)
     {
-        _isAlive = false;
+        isAlive = false;
         _isOffset = isOffset;
-        _renderer.color = isOffset ? _offsetColor : _baseColor;
+        UpdateTile();
     }
 
     void OnMouseEnter()
@@ -32,7 +35,12 @@ public class Tile : MonoBehaviour
     
     void OnMouseDown() 
     {
-        _isAlive = !_isAlive;
-        _renderer.color = _isAlive ? _aliveColor : (_isOffset ? _offsetColor : _baseColor);
+        isAlive = !isAlive;
+        UpdateTile();
+    }
+
+    public void UpdateTile()
+    {
+        _renderer.color = isAlive ? _aliveColor : (_isOffset ? _offsetColor : _baseColor);
     }
 }

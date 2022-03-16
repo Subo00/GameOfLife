@@ -265,5 +265,9 @@ PrefabInstance:
       propertyPath: _cam
       value: 
       objectReference: {fileID: 519420032}
+    - target: {fileID: 6206613075477743162, guid: a927346c8e07af9c0806bc5400dc625a, type: 3}
+      propertyPath: _randValue
+      value: 0.339
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a927346c8e07af9c0806bc5400dc625a, type: 3}

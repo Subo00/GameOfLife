@@ -7,11 +7,14 @@ public class GridManager : MonoBehaviour
     [SerializeField] private int _width, _height;
     [SerializeField] private Tile _tilePrefab;
     [SerializeField] private Transform _cam;
+    [Range(0.1f, 0.9f)]
+    [SerializeField] private float _randValue;
 
     private Dictionary<Vector2, Tile> _tiles;
     void Start()
     {
         GenerateGrid();
+        FillGrid();
     }
 
     void GenerateGrid()
@@ -43,5 +46,25 @@ public class GridManager : MonoBehaviour
         }
 
         return null;
+    }
+
+    public void ClearGrid()
+    {
+        foreach(KeyValuePair<Vector2, Tile> entry in _tiles)
+        {
+            entry.Value.isAlive = false;
+            entry.Value.UpdateTile();
+        }         
+    }
+
+    public void FillGrid()
+    {
+        ClearGrid();
+        foreach(KeyValuePair<Vector2, Tile> entry in _tiles)
+        {
+            bool set = Random.Range(0f, 1f) < _randValue ? true : false;
+            entry.Value.isAlive = set;
+            entry.Value.UpdateTile();
+        }
     }
 }
