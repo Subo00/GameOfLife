@@ -14,11 +14,19 @@ public class Tile : MonoBehaviour
     private bool _isOffset;
 
     public bool isAlive;
+    public int numOfNeighbours;
 
     public void Init(bool isOffset)
     {
         isAlive = false;
+        numOfNeighbours = 0;
         _isOffset = isOffset;
+        UpdateTile();
+    }
+
+    public void SetAlive(bool alive)
+    {
+        isAlive = alive;
         UpdateTile();
     }
 
@@ -33,6 +41,7 @@ public class Tile : MonoBehaviour
     }
 
     
+
     void OnMouseDown() 
     {
         isAlive = !isAlive;
