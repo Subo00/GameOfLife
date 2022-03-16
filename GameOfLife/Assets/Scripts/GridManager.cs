@@ -24,24 +24,27 @@ public class GridManager : MonoBehaviour
     void GenerateGrid()
     {
         _tiles = new Dictionary<Vector2, Tile>();
+
         _scaleX = _width > _maxWidth ? (float)_maxWidth/(float)_width : 1f;
         _scaleY = _height > _maxHeight ? (float)_maxHeight/(float)_height : 1f;
+        var scale = new Vector3(_scaleX, _scaleY);
+
         for(int x = 0; x < _width; x++)
         {
             for(int y = 0; y < _height; y++)
             {
-                var spawnedTile = Instantiate(_tilePrefab, new Vector3(x,y), Quaternion.identity);
+                var spawnedTile = Instantiate(_tilePrefab, new Vector3(x * _scaleX, y * _scaleY), Quaternion.identity);
                 spawnedTile.name = $"Tile {x} {y}";
 
                 var isOffset = (x % 2 == 0 && y % 2 != 0) || (x % 2 != 0 && y % 2 == 0);
                 spawnedTile.Init(isOffset);
+                spawnedTile.transform.localScale = scale;
                 
-
                 _tiles[new Vector2(x,y)] = spawnedTile;
             }
         }
-        _cam.transform.position = new Vector3((float)_width/2 - 0.5f,
-                                              (float)_height/2 - 0.5f,
+        _cam.transform.position = new Vector3((float)_width/2 * _scaleX - 0.5f,
+                                              (float)_height/2 * _scaleY - 0.5f,
                                                -10f);
     }
 
