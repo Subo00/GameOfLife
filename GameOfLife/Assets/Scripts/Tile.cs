@@ -52,4 +52,9 @@ public class Tile : MonoBehaviour
     {
         _renderer.color = isAlive ? _aliveColor : (_isOffset ? _offsetColor : _baseColor);
     }
+
+    public void DestroyTile()
+    {
+        Destroy(gameObject);
+    }
 }

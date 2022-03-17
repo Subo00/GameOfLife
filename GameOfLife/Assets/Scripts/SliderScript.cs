@@ -13,7 +13,7 @@ public class SliderScript : MonoBehaviour
     {
         _slider.onValueChanged.AddListener((v)=> 
         {
-            _sliderText.text = v.ToString();
+            _sliderText.text = v.ToString("0.00");
         });
     }
 }

@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class GridManager : MonoBehaviour
 {
-    [SerializeField] private  int _rows, _columns;
-    [SerializeField] private int _maxRows, _maxColumns;
+    [SerializeField] private int _columns, _rows;
+    [SerializeField] private int _maxColumns, _maxRows;
     [SerializeField] private Tile  _tilePrefab;
     [SerializeField] private Transform _cam;
     [Range(0.1f, 0.9f)]
-    [SerializeField] private float _randValue;
+    [SerializeField] private float _randomValue;
 
     private float _scaleX = 1f;
     private float _scaleY = 1f;
@@ -28,16 +28,16 @@ public class GridManager : MonoBehaviour
 
     public void CreateGrid()
     {
-        //DestroyGrid();
+        if(_tiles != null) DestroyGrid();
         _tiles = new Dictionary<Vector2, Tile>();
 
-        _scaleX = _rows > _maxRows ? (float)_maxRows/(float)_rows : 1f;
-        _scaleY = _columns > _maxColumns ? (float)_maxColumns/(float)_columns : 1f;
+        _scaleX = _columns > _maxColumns ? (float)_maxColumns/(float)_columns : 1f;
+        _scaleY = _rows > _maxRows ? (float)_maxRows/(float)_rows : 1f;
         var scale = new Vector3(_scaleX, _scaleY);
 
-        for(int x = 0; x < _rows; x++)
+        for(int x = 0; x < _columns; x++)
         {
-            for(int y = 0; y < _columns; y++)
+            for(int y = 0; y < _rows; y++)
             {
                 var spawnedTile = Instantiate(_tilePrefab, new Vector3(x * _scaleX, y * _scaleY), Quaternion.identity);
                 spawnedTile.name = $"Tile {x} {y}";
@@ -49,8 +49,8 @@ public class GridManager : MonoBehaviour
                 _tiles[new Vector2(x,y)] = spawnedTile;
             }
         }
-        _cam.transform.position = new Vector3((float)_rows/2 * _scaleX - 0.5f,
-                                              (float)_columns/2 * _scaleY - 0.5f,
+        _cam.transform.position = new Vector3((float)_columns/2 * _scaleX - 0.5f,
+                                              (float)_rows/2 * _scaleY - 0.5f,
                                                -10f);
     }
 
@@ -71,7 +71,7 @@ public class GridManager : MonoBehaviour
         ClearGrid();
         foreach(KeyValuePair<Vector2, Tile> entry in _tiles)
         {
-            bool set = Random.Range(0f, 1f) < _randValue ? true : false;
+            bool set = Random.Range(0f, 1f) < _randomValue ? true : false;
             entry.Value.SetAlive(set);
         }
     }
@@ -81,7 +81,7 @@ public class GridManager : MonoBehaviour
         foreach(KeyValuePair<Vector2, Tile> entry in _tiles) 
         { 
             var tile = GetTileAtPosition(entry.Key);
-            Destroy(tile);
+            tile.DestroyTile();
         }
         _tiles.Clear();  
         _tiles = null;  
@@ -122,9 +122,9 @@ public class GridManager : MonoBehaviour
        } 
 
         ClearGrid();
-        for(int x = 0; x < _rows; x++)
+        for(int x = 0; x < _columns; x++)
         {
-            for(int y = 0; y < _columns; y++)
+            for(int y = 0; y < _rows; y++)
             {
                 if(_futureTiles[x,y])
                 {
@@ -137,14 +137,15 @@ public class GridManager : MonoBehaviour
 
     void ClearFutureGrid()
     {
-        for(int x = 0; x < _rows; x++)
+        for(int x = 0; x < _columns; x++)
         {
-            for(int y = 0; y < _columns; y++)
+            for(int y = 0; y < _rows; y++)
             {
                 _futureTiles[x,y] = false;
             }
         }
     }
-    public void ChangeRows(float rows){ _rows = (int)rows; }
     public void ChangeColumns(float columns){ _columns = (int)columns; }
+    public void ChangeRows(float rows){ _rows = (int)rows; }
+    public void ChangeRand(float randomValue){ _randomValue = randomValue;}
 }
