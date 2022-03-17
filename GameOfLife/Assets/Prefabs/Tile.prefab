@@ -97,11 +97,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5941cd1d92b2b17ebad6ff82b8a805f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _baseColor: {r: 1, g: 0, b: 0.7523699, a: 1}
-  _offsetColor: {r: 0.7169812, g: 0, b: 0.53984463, a: 1}
+  _baseColor: {r: 0.21960784, g: 0.21960784, b: 0.21960784, a: 0}
+  _offsetColor: {r: 0.7169812, g: 0, b: 0.53984463, a: 0}
   _aliveColor: {r: 0.0558937, g: 0.5471698, b: 0.028390888, a: 1}
   _renderer: {fileID: 8895386555898147819}
   _hightlight: {fileID: 9118591055448455028}
+  isAlive: 0
+  numOfNeighbours: 0
 --- !u!61 &7592478837177153365
 BoxCollider2D:
   m_ObjectHideFlags: 0
