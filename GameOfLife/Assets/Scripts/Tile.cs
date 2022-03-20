@@ -1,13 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
-public class Tile : MonoBehaviour
+public class Tile : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField] private Color _baseColor;
     [SerializeField] private Color _offsetColor;
     [SerializeField] private Color _aliveColor;
-    [SerializeField] private SpriteRenderer _renderer;
+    [SerializeField] private Image _tileImage;
     [SerializeField] private GameObject _hightlight;
 
     
@@ -29,32 +31,27 @@ public class Tile : MonoBehaviour
         isAlive = alive;
         UpdateTile();
     }
-
-    void OnMouseEnter()
-    {
-        _hightlight.SetActive(true);
-    }
-
-    void OnMouseExit() 
-    {
-        _hightlight.SetActive(false);
-    }
-
     
-
-    void OnMouseDown() 
-    {
-        isAlive = !isAlive;
-        UpdateTile();
-    }
-
     public void UpdateTile()
     {
-        _renderer.color = isAlive ? _aliveColor : (_isOffset ? _offsetColor : _baseColor);
+        _tileImage.color = isAlive ? _aliveColor : (_isOffset ? _offsetColor : _baseColor);
     }
 
     public void DestroyTile()
     {
         Destroy(gameObject);
     }
+
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        _hightlight.SetActive(true);
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        _hightlight.SetActive(false);
+    }
+
+    public void OnDrop(PointerEventData eventData){}
 }

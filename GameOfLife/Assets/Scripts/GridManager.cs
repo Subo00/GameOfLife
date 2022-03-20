@@ -1,13 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.UI;
 public class GridManager : MonoBehaviour
 {
     [SerializeField] private int _columns, _rows;
     [SerializeField] private int _maxColumns, _maxRows;
     [SerializeField] private Tile  _tilePrefab;
-    [SerializeField] private Transform _cam;
+    
     [Range(0.1f, 0.9f)]
     [SerializeField] private float _randomValue;
 
@@ -30,28 +30,33 @@ public class GridManager : MonoBehaviour
     {
         if(_tiles != null) DestroyGrid();
         _tiles = new Dictionary<Vector2, Tile>();
-
+        
+        /*
         _scaleX = _columns > _maxColumns ? (float)_maxColumns/(float)_columns : 1f;
         _scaleY = _rows > _maxRows ? (float)_maxRows/(float)_rows : 1f;
         var scale = new Vector3(_scaleX, _scaleY);
+        */
 
         for(int x = 0; x < _columns; x++)
         {
             for(int y = 0; y < _rows; y++)
             {
-                var spawnedTile = Instantiate(_tilePrefab, new Vector3(x * _scaleX, y * _scaleY), Quaternion.identity);
+                //var spawnedTile = Instantiate(_tilePrefab, new Vector3(x * _scaleX, y * _scaleY), Quaternion.identity);
+                var spawnedTile = Instantiate(_tilePrefab, new Vector3(x, y, 0), Quaternion.identity, this.transform);
                 spawnedTile.name = $"Tile {x} {y}";
+                
+                var temp =  spawnedTile.transform.localPosition;
+                spawnedTile.transform.localPosition = new Vector3(temp.x - 8*x, temp.y - 8*y);
 
                 var isOffset = (x % 2 == 0 && y % 2 != 0) || (x % 2 != 0 && y % 2 == 0);
                 spawnedTile.Init(isOffset);
-                spawnedTile.transform.localScale = scale;
+                //spawnedTile.transform.localScale = scale;
                 
+
                 _tiles[new Vector2(x,y)] = spawnedTile;
             }
         }
-        _cam.transform.position = new Vector3((float)_columns/2 * _scaleX - 0.5f,
-                                              (float)_rows/2 * _scaleY - 0.5f,
-                                               -10f);
+        
     }
 
     public Tile GetTileAtPosition(Vector2 pos)
