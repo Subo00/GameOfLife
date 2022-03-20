@@ -37,19 +37,30 @@ public class Tile : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
     public void OnPointerEnter(PointerEventData eventData)
     {
         _hightlight.SetActive(true);
+        if(eventData.pointerDrag != null)
+        {
+        Draggable card = eventData.pointerDrag.GetComponent<Draggable>();
+        card.GetComponent<CanvasGroup>().alpha = 0;
+        }
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
         _hightlight.SetActive(false);
+        if(eventData.pointerDrag != null)
+        {
+        Draggable card = eventData.pointerDrag.GetComponent<Draggable>();        
+        card.GetComponent<CanvasGroup>().alpha = 1;
+        } 
     }
 
     public void OnDrop(PointerEventData eventData)
     {
-        Draggable d = eventData.pointerDrag.GetComponent<Draggable>();
-        if(d != null)
+        Draggable card = eventData.pointerDrag.GetComponent<Draggable>();
+        if(card != null)
         {
             this.transform.parent.GetComponent<GridHandler>().DrawElement(_id);
+            card.GetComponent<CanvasGroup>().alpha = 1;
         } 
     }
 
