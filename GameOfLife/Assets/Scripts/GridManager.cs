@@ -48,8 +48,8 @@ public class GridManager : MonoBehaviour
                 var temp =  spawnedTile.transform.localPosition;
                 spawnedTile.transform.localPosition = new Vector3(temp.x - 8*x, temp.y - 8*y);
 
-                var isOffset = (x % 2 == 0 && y % 2 != 0) || (x % 2 != 0 && y % 2 == 0);
-                spawnedTile.Init(isOffset);
+                //var isOffset = (x % 2 == 0 && y % 2 != 0) || (x % 2 != 0 && y % 2 == 0);
+                //spawnedTile.Init(isOffset);
                 //spawnedTile.transform.localScale = scale;
                 
 

@@ -7,40 +7,31 @@ using UnityEngine.EventSystems;
 public class Tile : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField] private Color _baseColor;
-    [SerializeField] private Color _offsetColor;
     [SerializeField] private Color _aliveColor;
     [SerializeField] private Image _tileImage;
     [SerializeField] private GameObject _hightlight;
 
-    
-    private bool _isOffset;
-
+    private int _id;
     public bool isAlive;
     public int numOfNeighbours;
 
-    public void Init(bool isOffset)
+    public void Init(int id)
     {
-        isAlive = false;
+        SetAlive(false);
         numOfNeighbours = 0;
-        _isOffset = isOffset;
-        UpdateTile();
+        _id = id;
     }
 
+    
     public void SetAlive(bool alive)
     {
         isAlive = alive;
         UpdateTile();
     }
     
-    public void UpdateTile()
-    {
-        _tileImage.color = isAlive ? _aliveColor : (_isOffset ? _offsetColor : _baseColor);
-    }
+    public void UpdateTile(){ _tileImage.color = isAlive ? _aliveColor : _baseColor; }
 
-    public void DestroyTile()
-    {
-        Destroy(gameObject);
-    }
+    public void DestroyTile(){   Destroy(gameObject); }
 
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -53,5 +44,13 @@ public class Tile : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
         _hightlight.SetActive(false);
     }
 
-    public void OnDrop(PointerEventData eventData){}
+    public void OnDrop(PointerEventData eventData)
+    {
+        Draggable d = eventData.pointerDrag.GetComponent<Draggable>();
+        if(d != null)
+        {
+            this.transform.parent.GetComponent<GridHandler>().DrawElement(_id);
+        } 
+    }
+
 }
