@@ -36,21 +36,23 @@ public class Tile : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        _hightlight.SetActive(true);
+        ActivateHighlight(true);
         if(eventData.pointerDrag != null)
         {
-        Draggable card = eventData.pointerDrag.GetComponent<Draggable>();
-        card.GetComponent<CanvasGroup>().alpha = 0;
+            Draggable card = eventData.pointerDrag.GetComponent<Draggable>();
+            this.transform.parent.GetComponent<GridHandler>().HoverElement(_id, card.name, true);
+            card.GetComponent<CanvasGroup>().alpha = 0;
         }
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        _hightlight.SetActive(false);
+        ActivateHighlight(false);
         if(eventData.pointerDrag != null)
         {
-        Draggable card = eventData.pointerDrag.GetComponent<Draggable>();        
-        card.GetComponent<CanvasGroup>().alpha = 1;
+            Draggable card = eventData.pointerDrag.GetComponent<Draggable>();
+            this.transform.parent.GetComponent<GridHandler>().HoverElement(_id, card.name, false);       
+            card.GetComponent<CanvasGroup>().alpha = 1;
         } 
     }
 
@@ -59,9 +61,11 @@ public class Tile : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
         Draggable card = eventData.pointerDrag.GetComponent<Draggable>();
         if(card != null)
         {
-            this.transform.parent.GetComponent<GridHandler>().DrawElement(_id);
+            this.transform.parent.GetComponent<GridHandler>().DrawElement(_id, card.name);
             card.GetComponent<CanvasGroup>().alpha = 1;
         } 
     }
+
+    public void ActivateHighlight(bool active){_hightlight.SetActive(active);}
 
 }
