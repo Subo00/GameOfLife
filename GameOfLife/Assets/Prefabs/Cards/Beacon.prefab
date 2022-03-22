@@ -7,6 +7,46 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 325195849226454379, guid: 51654a4cdb87833ad922832962c58935, type: 3}
+      propertyPath: _cost
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 325195849226454379, guid: 51654a4cdb87833ad922832962c58935, type: 3}
+      propertyPath: _drawInstructions.Array.size
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 325195849226454379, guid: 51654a4cdb87833ad922832962c58935, type: 3}
+      propertyPath: _drawInstructions.Array.data[1].y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 325195849226454379, guid: 51654a4cdb87833ad922832962c58935, type: 3}
+      propertyPath: _drawInstructions.Array.data[2].x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 325195849226454379, guid: 51654a4cdb87833ad922832962c58935, type: 3}
+      propertyPath: _drawInstructions.Array.data[3].x
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 325195849226454379, guid: 51654a4cdb87833ad922832962c58935, type: 3}
+      propertyPath: _drawInstructions.Array.data[3].y
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 325195849226454379, guid: 51654a4cdb87833ad922832962c58935, type: 3}
+      propertyPath: _drawInstructions.Array.data[4].x
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 325195849226454379, guid: 51654a4cdb87833ad922832962c58935, type: 3}
+      propertyPath: _drawInstructions.Array.data[4].y
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 325195849226454379, guid: 51654a4cdb87833ad922832962c58935, type: 3}
+      propertyPath: _drawInstructions.Array.data[5].x
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 325195849226454379, guid: 51654a4cdb87833ad922832962c58935, type: 3}
+      propertyPath: _drawInstructions.Array.data[5].y
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 3219888865705876868, guid: 51654a4cdb87833ad922832962c58935, type: 3}
       propertyPath: m_Sprite
       value: 

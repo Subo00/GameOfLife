@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class Tile : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerExitHandler
+public class Tile : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
     [SerializeField] private Color _baseColor;
     [SerializeField] private Color _aliveColor;
@@ -21,9 +21,9 @@ public class Tile : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
         SetAlive(false);
         numOfNeighbours = 0;
         _id = id;
+        isAliveNextTurn = false;
     }
 
-    
     public void SetAlive(bool alive)
     {
         isAlive = alive;
@@ -35,17 +35,17 @@ public class Tile : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
         isAliveNextTurn = false;
     }
     public void UpdateTile(){ _tileImage.color = isAlive ? _aliveColor : _baseColor; }
-
+    public void ActivateHighlight(bool active){_hightlight.SetActive(active);}
     public void DestroyTile(){   Destroy(gameObject); }
 
-
+    public void OnPointerClick(PointerEventData eventData){ SetAlive(!isAlive);  }
     public void OnPointerEnter(PointerEventData eventData)
     {
         ActivateHighlight(true);
         if(eventData.pointerDrag != null)
         {
-            Draggable card = eventData.pointerDrag.GetComponent<Draggable>();
-            this.transform.parent.GetComponent<GridHandler>().HoverElement(_id, card.name, true);
+            Card card = eventData.pointerDrag.GetComponent<Card>();
+            this.transform.parent.GetComponent<GridHandler>().HoverElement(_id, card.GetDrawInstructions(), true);
             card.GetComponent<CanvasGroup>().alpha = 0;
         }
     }
@@ -55,22 +55,22 @@ public class Tile : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
         ActivateHighlight(false);
         if(eventData.pointerDrag != null)
         {
-            Draggable card = eventData.pointerDrag.GetComponent<Draggable>();
-            this.transform.parent.GetComponent<GridHandler>().HoverElement(_id, card.name, false);       
+            Card card = eventData.pointerDrag.GetComponent<Card>(); //get the card component
+            this.transform.parent.GetComponent<GridHandler>().HoverElement(_id, card.GetDrawInstructions(), false);//send instructions to parent
             card.GetComponent<CanvasGroup>().alpha = 1;
         } 
     }
 
     public void OnDrop(PointerEventData eventData)
     {
-        Draggable card = eventData.pointerDrag.GetComponent<Draggable>();
+        Card card = eventData.pointerDrag.GetComponent<Card>();
         if(card != null)
         {
-            this.transform.parent.GetComponent<GridHandler>().DrawElement(_id, card.name);
+            this.transform.parent.GetComponent<GridHandler>().DrawElement(_id, card.GetDrawInstructions());
             card.GetComponent<CanvasGroup>().alpha = 1;
         } 
     }
 
-    public void ActivateHighlight(bool active){_hightlight.SetActive(active);}
+    
 
 }
