@@ -11,11 +11,12 @@ public class Tile : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
     [SerializeField] private Image _tileImage;
     [SerializeField] private GameObject _hightlight;
 
-    private int _id;
+    private Vector2 _id;
     public bool isAlive;
+    public bool isAliveNextTurn = false;
     public int numOfNeighbours;
 
-    public void Init(int id)
+    public void Init(Vector2 id)
     {
         SetAlive(false);
         numOfNeighbours = 0;
@@ -28,7 +29,11 @@ public class Tile : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
         isAlive = alive;
         UpdateTile();
     }
-    
+    public void NextTurn()
+    {
+        SetAlive(isAliveNextTurn);
+        isAliveNextTurn = false;
+    }
     public void UpdateTile(){ _tileImage.color = isAlive ? _aliveColor : _baseColor; }
 
     public void DestroyTile(){   Destroy(gameObject); }

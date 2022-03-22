@@ -6,29 +6,37 @@ public class GridHandler : MonoBehaviour
 {
     [SerializeField] private int _squareSide;
     [SerializeField] private Tile _tilePrefab;
+    [Range(0.1f, 0.7f)]
+    [SerializeField] private float _randomValue;
     private RectTransform _rectTransform;
-    private List<Tile> _tiles;
+    private Dictionary<Vector2, Tile> _tiles;
 
     void Start()
     {
         _rectTransform = GetComponent<RectTransform>();
-        _tiles = new List<Tile>();
+        _tiles = new Dictionary<Vector2, Tile>();
         CreateGrid();
     }
 
     public void CreateGrid()
     {
-        ResizeCellSize();
-
-        for(int i = 0; i < _squareSide; i++)
+        ResizeCellSize();        
+        for(int x = 0; x < _squareSide; x++)
         {
-            for(int j = 0; j < _squareSide; j++)
+            for(int y = 0; y < _squareSide; y++)
             {
                 Tile spawnedTile = Instantiate(_tilePrefab, this.transform);
-                spawnedTile.Init(i * _squareSide + j);
-                _tiles.Add(spawnedTile);
+                Vector2 pos = new Vector2(x,y);
+                spawnedTile.Init(pos);
+                _tiles[pos] = spawnedTile;
             }
         }
+    }
+
+    public Tile GetTileAtPosition(Vector2 pos)
+    {
+        if(_tiles.TryGetValue(pos, out var tile)){ return tile;  }
+        return null;
     }
 
     private void ResizeCellSize() //resizes the tiles that will be under the grid
@@ -39,11 +47,61 @@ public class GridHandler : MonoBehaviour
         this.GetComponent<GridLayoutGroup>().cellSize = reSize;
     }
 
+    public void ClearGrid(){ foreach(KeyValuePair<Vector2, Tile> entry in _tiles) { entry.Value.SetAlive(false); entry.Value.numOfNeighbours = 0; } }
 
+    public void FillGrid()
+    {
+        ClearGrid();
+        foreach(KeyValuePair<Vector2, Tile> entry in _tiles)
+        {
+            bool set = Random.Range(0f, 1f) < _randomValue ? true : false;
+            entry.Value.SetAlive(set);
+        }
+    }
 
+     public void Iterate()
+    {
+        foreach(KeyValuePair<Vector2, Tile> entry in _tiles)
+        {
+            if(entry.Value.isAlive)
+            {   
+                for(int x = -1; x < 2; x++)
+                {
+                    for(int y = -1; y < 2; y++)
+                    {
+                        Vector2 temp = new Vector2((float)x, (float)y);
+                        Vector2 newKey = entry.Key + temp;
+                        var tile = GetTileAtPosition(newKey);
+                        if(tile != null) tile.numOfNeighbours++;
+                    }
+                }
+                entry.Value.numOfNeighbours--; //because we added himself as 
+            }                                  //a neighbour in the loop
+        } 
+
+       foreach(KeyValuePair<Vector2, Tile> entry in _tiles)
+       {
+           var tile = entry.Value;
+           if(tile.isAlive && (tile.numOfNeighbours == 2 || tile.numOfNeighbours == 3))
+           {
+                tile.isAliveNextTurn = true;
+           }
+           else if(!tile.isAlive && tile.numOfNeighbours == 3)
+           {
+                tile.isAliveNextTurn = true;    
+           }
+       } 
+
+        ClearGrid();
+        foreach(KeyValuePair<Vector2, Tile> entry in _tiles)
+        {
+            entry.Value.NextTurn(); //uses the isAliceNextTurn flag
+        }
+    }
+  
     #region HoverElements
 
-    public void HoverElement(int id, string elementName, bool set)
+    public void HoverElement(Vector2 id, string elementName, bool set)
     {
         switch(elementName)
         {
@@ -57,47 +115,69 @@ public class GridHandler : MonoBehaviour
                 BeaconHover(id, set); break;
         }
     }
-    private void BeehiveHover(int id, bool set)
+    private void BeehiveHover(Vector2 id, bool set)
     {
-        _tiles[id].ActivateHighlight(set);
-        _tiles[id-_squareSide+1].ActivateHighlight(set);
-        _tiles[id-_squareSide+2].ActivateHighlight(set);
-        _tiles[id+_squareSide+1].ActivateHighlight(set);
-        _tiles[id+_squareSide+2].ActivateHighlight(set);
-        _tiles[id+3].ActivateHighlight(set);
+        Tile tile;
+        GetTileAtPosition(id).ActivateHighlight(set); //I dont' need to check this one, this one is garanteed
+        tile = GetTileAtPosition(new Vector2(id.x-1, id.y+1));
+        if(tile != null) tile.ActivateHighlight(set);             //      
+        tile = GetTileAtPosition(new Vector2(id.x-1, id.y+2));    //      ##  
+        if(tile != null) tile.ActivateHighlight(set);             // id->#  #
+        tile = GetTileAtPosition(new Vector2(id.x, id.y+3));      //      ##      
+        if(tile != null) tile.ActivateHighlight(set);             //
+        tile = GetTileAtPosition(new Vector2(id.x+1, id.y+1));
+        if(tile != null) tile.ActivateHighlight(set);
+        tile = GetTileAtPosition(new Vector2(id.x+1, id.y+2));    
+        if(tile != null) tile.ActivateHighlight(set);
+    }
+    
+    private void BlockHover(Vector2 id,bool set)
+    {
+        Tile tile;
+        GetTileAtPosition(id).ActivateHighlight(set); //I dont' need to check this one, this one is garanteed
+        tile = GetTileAtPosition(new Vector2(id.x+1, id.y));
+        if(tile != null) tile.ActivateHighlight(set);           // id->##
+        tile = GetTileAtPosition(new Vector2(id.x, id.y+1));    //     ##
+        if(tile != null) tile.ActivateHighlight(set);                     
+        tile = GetTileAtPosition(new Vector2(id.x+1, id.y+1));
+        if(tile != null) tile.ActivateHighlight(set);
+    }
+    private void GliderHover(Vector2 id, bool set)
+    {
+        Tile tile;
+        GetTileAtPosition(id).ActivateHighlight(set); //I dont' need to check this one, this one is garanteed
+        tile = GetTileAtPosition(new Vector2(id.x, id.y-1));
+        if(tile != null) tile.ActivateHighlight(set);
+        tile = GetTileAtPosition(new Vector2(id.x, id.y+1));      //    #
+        if(tile != null) tile.ActivateHighlight(set);             //     #   
+        tile = GetTileAtPosition(new Vector2(id.x-1, id.y+1));    //   ###
+        if(tile != null) tile.ActivateHighlight(set);             //  id^
+        tile = GetTileAtPosition(new Vector2(id.x-2, id.y));
+        if(tile != null) tile.ActivateHighlight(set);
     }
 
-    private void BlockHover(int id,bool set)
+    private void BeaconHover(Vector2 id, bool set)
     {
-        _tiles[id].ActivateHighlight(set);
-        _tiles[id+1].ActivateHighlight(set);
-        _tiles[id+_squareSide+1].ActivateHighlight(set);
-        _tiles[id+_squareSide].ActivateHighlight(set);
-    }
-    private void GliderHover(int id, bool set)
-    {
-        _tiles[id].ActivateHighlight(set);
-        _tiles[id+1].ActivateHighlight(set);
-        _tiles[id+2].ActivateHighlight(set);
-        _tiles[id-_squareSide+2].ActivateHighlight(set);
-        _tiles[id-_squareSide*2 + 1].ActivateHighlight(set);
-    }
-
-    private void BeaconHover(int id, bool set)
-    {
-        _tiles[id].ActivateHighlight(set);
-        _tiles[id+1].ActivateHighlight(set);
-        _tiles[id+_squareSide].ActivateHighlight(set);
-        _tiles[id+_squareSide*2+3].ActivateHighlight(set);
-        _tiles[id+_squareSide*3+2].ActivateHighlight(set);
-        _tiles[id+_squareSide*3+3].ActivateHighlight(set);
+        Tile tile;
+        tile = GetTileAtPosition(new Vector2(id.x, id.y-1));
+        if(tile != null) tile.ActivateHighlight(set);
+        tile = GetTileAtPosition(new Vector2(id.x-1, id.y-1));
+        if(tile != null) tile.ActivateHighlight(set);
+        tile = GetTileAtPosition(new Vector2(id.x-1, id.y));       // ##
+        if(tile != null) tile.ActivateHighlight(set);              // # <-id
+        tile = GetTileAtPosition(new Vector2(id.x+1, id.y+2));     //    #
+        if(tile != null) tile.ActivateHighlight(set);              //   ##
+        tile = GetTileAtPosition(new Vector2(id.x+2, id.y+1));     //
+        if(tile != null) tile.ActivateHighlight(set);
+        tile = GetTileAtPosition(new Vector2(id.x+2, id.y+2));
+        if(tile != null) tile.ActivateHighlight(set);
     }
     #endregion
 
 
-
+    
     #region drawElements
-    public void DrawElement(int id, string elementName)
+    public void DrawElement(Vector2 id, string elementName)
     {
         switch(elementName)
         {
@@ -114,42 +194,64 @@ public class GridHandler : MonoBehaviour
         HoverElement( id, elementName, false);
     }
 
-    private void Beehive(int id)
+    private void Beehive(Vector2 id)
     {
-        _tiles[id].SetAlive(true);
-        _tiles[id-_squareSide+1].SetAlive(true);
-        _tiles[id-_squareSide+2].SetAlive(true);
-        _tiles[id+_squareSide+1].SetAlive(true);
-        _tiles[id+_squareSide+2].SetAlive(true);
-        _tiles[id+3].SetAlive(true);
+        Tile tile;
+        GetTileAtPosition(id).SetAlive(true); //I dont' need to check this one, this one is garanteed
+        tile = GetTileAtPosition(new Vector2(id.x-1, id.y+1));
+        if(tile != null) tile.SetAlive(true);                     //      
+        tile = GetTileAtPosition(new Vector2(id.x-1, id.y+2));    //      ##  
+        if(tile != null) tile.SetAlive(true);                     // id->#  #
+        tile = GetTileAtPosition(new Vector2(id.x, id.y+3));      //      ##      
+        if(tile != null) tile.SetAlive(true);                     //
+        tile = GetTileAtPosition(new Vector2(id.x+1, id.y+1));
+        if(tile != null) tile.SetAlive(true);
+        tile = GetTileAtPosition(new Vector2(id.x+1, id.y+2));    
+        if(tile != null) tile.SetAlive(true);
     }
 
-
-    private void Block(int id)
+    
+    private void Block(Vector2 id)
     {
-        _tiles[id].SetAlive(true);
-        _tiles[id+1].SetAlive(true);
-        _tiles[id+_squareSide+1].SetAlive(true);
-        _tiles[id+_squareSide].SetAlive(true);
+        Tile tile;
+        GetTileAtPosition(id).SetAlive(true); //I dont' need to check this one, this one is garanteed
+        tile = GetTileAtPosition(new Vector2(id.x+1, id.y));
+        if(tile != null) tile.SetAlive(true);                   // id->##
+        tile = GetTileAtPosition(new Vector2(id.x, id.y+1));    //     ##
+        if(tile != null) tile.SetAlive(true);                     
+        tile = GetTileAtPosition(new Vector2(id.x+1, id.y+1));
+        if(tile != null) tile.SetAlive(true);
     }
 
-    private void Glider(int id)
+    private void Glider(Vector2 id)
     {
-        _tiles[id].SetAlive(true);
-        _tiles[id+1].SetAlive(true);
-        _tiles[id+2].SetAlive(true);
-        _tiles[id-_squareSide+2].SetAlive(true);
-        _tiles[id-_squareSide*2 + 1].SetAlive(true);
+        Tile tile;
+        GetTileAtPosition(id).SetAlive(true); //I dont' need to check this one, this one is garanteed
+        tile = GetTileAtPosition(new Vector2(id.x, id.y-1));
+        if(tile != null) tile.SetAlive(true);
+        tile = GetTileAtPosition(new Vector2(id.x, id.y+1));    //    #
+        if(tile != null) tile.SetAlive(true);                   //     #   
+        tile = GetTileAtPosition(new Vector2(id.x-1, id.y+1));  //   ###
+        if(tile != null) tile.SetAlive(true);                   //  id^
+        tile = GetTileAtPosition(new Vector2(id.x-2, id.y));
+        if(tile != null) tile.SetAlive(true);
     }
 
-    private void Beacon(int id)
+    private void Beacon(Vector2 id)
     {
-        _tiles[id].SetAlive(true);
-        _tiles[id+1].SetAlive(true);
-        _tiles[id+_squareSide].SetAlive(true);
-        _tiles[id+_squareSide*2+3].SetAlive(true);
-        _tiles[id+_squareSide*3+2].SetAlive(true);
-        _tiles[id+_squareSide*3+3].SetAlive(true);
+        Tile tile;
+        tile = GetTileAtPosition(new Vector2(id.x, id.y-1));
+        if(tile != null) tile.SetAlive(true);        
+        tile = GetTileAtPosition(new Vector2(id.x-1, id.y-1));
+        if(tile != null) tile.SetAlive(true);        
+        tile = GetTileAtPosition(new Vector2(id.x-1, id.y));     // ##
+        if(tile != null) tile.SetAlive(true);                      // # <-id
+        tile = GetTileAtPosition(new Vector2(id.x+1, id.y+2));     //    #
+        if(tile != null) tile.SetAlive(true);                      //   ##
+        tile = GetTileAtPosition(new Vector2(id.x+2, id.y+1));     //
+        if(tile != null) tile.SetAlive(true);        
+        tile = GetTileAtPosition(new Vector2(id.x+2, id.y+2));
+        if(tile != null) tile.SetAlive(true);        
     }
     #endregion
 }
