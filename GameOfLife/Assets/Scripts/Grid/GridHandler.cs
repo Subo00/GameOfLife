@@ -10,6 +10,7 @@ public class GridHandler : MonoBehaviour
     [Range(0.1f, 0.7f)]
     [SerializeField] private float _randomValue;
     [SerializeField] private TMP_Text _scoreDisplay;
+    [SerializeField] private bool _isFreeStyle = false;
     private RectTransform _rectTransform;
     private Dictionary<Vector2, Tile> _tiles;
     private int _aliveCount;
@@ -33,7 +34,7 @@ public class GridHandler : MonoBehaviour
             {
                 Tile spawnedTile = Instantiate(_tilePrefab, this.transform);
                 Vector2 pos = new Vector2(x,y);
-                spawnedTile.Init(pos);
+                spawnedTile.Init(pos,_isFreeStyle);
                 _tiles[pos] = spawnedTile;
             }
         }
@@ -131,7 +132,7 @@ public class GridHandler : MonoBehaviour
     }
 
     #endregion
-    
+    public int GetAliveCount(){return _aliveCount;}
     public void ShowAliveCount(){_scoreDisplay.text = _aliveCount.ToString();}
     /*
     public void ChangeColumns(float columns){ _columns = (int)columns; }

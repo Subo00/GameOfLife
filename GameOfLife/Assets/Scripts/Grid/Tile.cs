@@ -10,7 +10,7 @@ public class Tile : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
     [SerializeField] private Color _aliveColor;
     [SerializeField] private Image _tileImage;
     [SerializeField] private GameObject _hightlight;
-    
+    private bool _isFreeStyle;
     private GridHandler _grid;
 
     private Vector2 _id;
@@ -18,12 +18,13 @@ public class Tile : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
     public bool isAliveNextTurn = false;
     public int numOfNeighbours;
 
-    public void Init(Vector2 id)
+    public void Init(Vector2 id, bool isFreeStyle)
     {
         SetAlive(false);
         numOfNeighbours = 0;
         _id = id;
         isAliveNextTurn = false;
+        _isFreeStyle = isFreeStyle;
         _grid = this.transform.parent.GetComponent<GridHandler>();
     }
 
@@ -41,7 +42,7 @@ public class Tile : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
     public void ActivateHighlight(bool active){_hightlight.SetActive(active);}
     public void DestroyTile(){   Destroy(gameObject); }
 
-    public void OnPointerClick(PointerEventData eventData){ /*SetAlive(!isAlive);*/  }
+    public void OnPointerClick(PointerEventData eventData){ if(_isFreeStyle) SetAlive(!isAlive);  }
     public void OnPointerEnter(PointerEventData eventData)
     {
         ActivateHighlight(true);

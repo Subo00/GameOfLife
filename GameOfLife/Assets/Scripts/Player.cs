@@ -5,6 +5,7 @@ using TMPro;
 public class Player : MonoBehaviour
 {
     [SerializeField] private List<Card> _deck;
+    [SerializeField] TMP_Text _deckDisplay;
     [SerializeField] TMP_Text _actionDisplay;
     private int _maxActions = 4;
     private int _actions;
@@ -18,6 +19,7 @@ public class Player : MonoBehaviour
     public bool CanPlay(int cost){ return _actions >= cost ? true : false; }
     public void SpendAction(int cost){_actions -= cost; UpdateAction();}
     private void UpdateAction(){ _actionDisplay.text = _actions.ToString() + "/" + _maxActions;}
+    private void UpdateDeck(){ _deckDisplay.text = _deck.Count.ToString();}
     public void ResetAction(){ _actions = _maxActions; UpdateAction();}
     
     public void DrawCard()
@@ -27,6 +29,7 @@ public class Player : MonoBehaviour
         {
             Instantiate(_deck[0], this.transform);
             _deck.RemoveAt(0);
+            UpdateDeck();
         }
         else
         {

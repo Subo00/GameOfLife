@@ -8,6 +8,7 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler ,IEndDra
     public Transform parentToReturnTo = null;
     private CanvasGroup _canvasGroup;
     private Card card;
+    private Player _player;
     void Start()
     {
         _canvasGroup = GetComponent<CanvasGroup>();
@@ -17,6 +18,7 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler ,IEndDra
     public void OnBeginDrag(PointerEventData eventData)
     {        
         parentToReturnTo = this.transform.parent;
+        _player = parentToReturnTo.GetComponent<Player>();
         //play sound
         this.transform.SetParent(this.transform.root);
         _canvasGroup.blocksRaycasts = false;
@@ -26,7 +28,8 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler ,IEndDra
     public void OnDrag(PointerEventData eventData)
     {
         //call to parent check if this card can be played
-        if(parentToReturnTo.GetComponent<Player>().CanPlay(card.GetCost()))
+        
+        if(_player.CanPlay(card.GetCost()))
         {
             this.transform.position = eventData.position;
         }
