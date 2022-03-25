@@ -20,9 +20,11 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler ,IEndDra
         parentToReturnTo = this.transform.parent;
         _player = parentToReturnTo.GetComponent<Player>();
         //play sound
-        this.transform.SetParent(this.transform.root);
-        _canvasGroup.blocksRaycasts = false;
-        
+        if(_player.CanPlay(card.GetCost()))
+        {
+            this.transform.SetParent(this.transform.root);
+            _canvasGroup.blocksRaycasts = false;
+        }
     }
 
     public void OnDrag(PointerEventData eventData)

@@ -9,8 +9,10 @@ public class GameHandler : MonoBehaviour
     [SerializeField]private int _numOfIterations;
     [SerializeField]private GridHandler _grid;
     [SerializeField]private GameObject _buttons;
+    [SerializeField]private GameObject _endGamePanel;
     [SerializeField] TMP_Text _turnsDisplay;
     [SerializeField] TMP_Text _globalDisplay;
+    [SerializeField] TMP_Text _messageDisplay;
     private int _turns = 0;
     private int _maxTurns = 6;
     private int _globalScore = 0;
@@ -41,7 +43,12 @@ public class GameHandler : MonoBehaviour
         _globalScore += _grid.GetAliveCount();
         UpdateGlobal();
 
-        if(_turns == _maxTurns) Debug.Log("End Game");
+        if(_turns == _maxTurns) EndGame();
+    }
+    private void EndGame()
+    {
+        _endGamePanel.SetActive(true);
+        _messageDisplay.text = "Final score is: \n" + _globalScore.ToString();
     }
 
     private void UpdateTurns(){ _turnsDisplay.text = _turns.ToString() + "/" + _maxTurns.ToString(); }
