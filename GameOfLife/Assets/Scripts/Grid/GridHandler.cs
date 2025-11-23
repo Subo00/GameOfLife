@@ -82,7 +82,7 @@ public class GridHandler : MonoBehaviour
                         if(tile != null) tile.numOfNeighbours++;
                     }
                 }
-                entry.Value.numOfNeighbours--; //because we added himself as 
+                entry.Value.numOfNeighbours--; //because we added itself as 
             }                                  //a neighbour in the loop
         } 
         _aliveCount = 0;
